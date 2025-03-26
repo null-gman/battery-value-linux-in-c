@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h> //system()
 #include <unistd.h> //sleep()
 #include "strToNum.h"
 
@@ -38,17 +39,49 @@ int main(void)
 
     power_t myPower_t = {0,0};
 
+    /* notify-send  -t 4 <title> <content> && aplay <soundFile> */
+
+    int isAvtive = 1;/* so the notification done once in the time for every value below */
     while (1) {
             getPowerPerS(&myPower_t);
             /* to get percentage of value get the max of it and ( (value / max of if) * 100 ) */
             LLINT power_percentage = (LLINT) ( ((double)myPower_t.powerNow / (double) myPower_t.powerFull) * (double)100 );
             printf("power percentage : %lu%%\n",power_percentage);
-            if (power_percentage <= 0) {
-                break;
+            switch (power_percentage) {
+                case 100:
+                case 95:
+                case 90:
+                case 82:
+                    if (isAvtive)
+                        system("notify-send  -t 4 \"battary\" \"battery is Battery is high\" && aplay ./assets/sound.wav");
+                    isAvtive = 0;
+                    break;
+                case 45:
+                case 40:
+                case 30:
+                case 20:
+                case 15:
+                case 10:
+                case 5:
+                case 3:
+                case 2:
+                    if (isAvtive)
+                        system("notify-send  -t 4 \"battary\" \"battery is low\" && aplay ./assets/sound.wav");
+                    isAvtive = 0;
+                    break;
+                case 1:
+                    if (isAvtive)
+                       system("notify-send  -t 4 \"battary\" \"the program will close\" && aplay ./assets/sound.wav");
+                    isAvtive = 0;
+                    goto END;
+                    break;
+                default:
+                    /* After reaching another level, the program will be ready for the next notification. */
+                    isAvtive = 1;
+                    break;
             }
-
             sleep(2);
-
     }
+END:
     return 0;
 }
