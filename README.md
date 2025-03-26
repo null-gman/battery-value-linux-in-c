@@ -20,9 +20,9 @@ When the battery reaches a certain level, the program will notify the user using
 
 # usage
 1. run the *binary* like any CLI tool from the trminal :
-    ```bash
-    ./prog
-    ```
+```bash
+./prog
+```
 > Make sure `/assets/sound.wav` is in the current working directory.
 ### flages
 the is no flgaes right now , but comming soon.
